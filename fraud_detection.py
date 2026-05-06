@@ -16,7 +16,7 @@ password = os.getenv('DB_PASSWORD')
 
 engine = create_engine(f'mysql+pymysql://{username}:{password}@{server}:{port}/{database}')
 
-#print("Connected")
+print("Connected")
 
 
 query = """
@@ -43,15 +43,15 @@ WHERE am.seera_programname LIKE '%%Direct to Customer%%'
   AND LOWER(app.seera_offeringname) = 'packs'
   AND YEAR(am.createdon) IN (2025, 2026)
   AND customer.emailaddress1 IS NOT NULL
+  AND am.seera_programmeasureidname NOT LIKE '%%Adjustment%%'
 ORDER BY am.createdon DESC
 """
 
 #save locally from aws
-#df = pd.read_sql(query, engine)
+df = pd.read_sql(query, engine)
 #df.to_csv('raw_packs_data.csv', index=False)
 
-# uncommented two rows above after saving loocally so it wont pull the data from aws every run
-df = pd.read_csv('raw_packs_data.csv')
+
 
 #print(f"Total rows: {len(df)}")
 #print(df.head())
@@ -162,19 +162,18 @@ JOIN tgt.account customer
 WHERE customer.emailaddress1 IS NOT NULL
   AND am.seera_measuregroupcategory = 7
   AND am.seera_measurecategory = 4
+  AND app.statuscode NOT IN (234840008, 234840015)
 ORDER BY site.seera_name, am.createdon
 """
-
+ 
 # save locally from aws
-#df_thermostats = pd.read_sql(query_thermostats, engine)
+df_thermostats = pd.read_sql(query_thermostats, engine)
 #df_thermostats.to_csv('raw_thermostats_data.csv', index=False)
-
-#uncommented two rows above after saving loocally so it wont pull the data from aws every run
-df_thermostats = pd.read_csv('raw_thermostats_data.csv')
-
+ 
+ 
 print(f"Total thermostat rows: {len(df_thermostats)}")
-
-
+ 
+ 
 thermostat_violations = (
     df_thermostats.groupby('site_address')
     .agg(order_count=('measure_id', 'count'),
@@ -182,8 +181,8 @@ thermostat_violations = (
          account_name=('account_name', 'first'))
     .reset_index()
 )
-
+ 
 thermostat_violations = thermostat_violations[thermostat_violations['order_count'] > 2]
-
+ 
 thermostat_violations.to_csv('thermostat_violations.csv', index=False)
-print(f"Thermostat violations: {len(thermostat_violations)} rows saved")
+#print(f"Thermostat violations: {len(thermostat_violations)} rows saved")
