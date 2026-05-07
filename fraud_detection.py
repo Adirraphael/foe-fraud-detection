@@ -89,10 +89,10 @@ site_violations = site_violations[site_violations['order_count'] > 1]
 #print(site_violations)
 
 # csv exports
-#account_violations.to_csv('account_rule_violations.csv', index=False)
+account_violations.to_csv('account_rule_violations.csv', index=False)
 #print(f"Account rule violations: {len(account_violations)} rows saved")
 
-#site_violations.to_csv('site_rule_violations.csv', index=False)
+site_violations.to_csv('site_rule_violations.csv', index=False)
 #print(f"Site rule violations: {len(site_violations)} rows saved")
 
 #bonus
@@ -136,7 +136,7 @@ bonus_violations = pd.DataFrame(flagged_accounts)
 #print(bonus_violations)
 
 #csv export
-#bonus_violations.to_csv('address_proximity_violations.csv', index=False)
+bonus_violations.to_csv('address_proximity_violations.csv', index=False)
 #print(f"Bonus violations: {len(bonus_violations)} rows saved")
 
 
@@ -166,7 +166,7 @@ WHERE customer.emailaddress1 IS NOT NULL
 ORDER BY site.seera_name, am.createdon
 """
  
-# save locally from aws
+# save locally from aws!
 df_thermostats = pd.read_sql(query_thermostats, engine)
 #df_thermostats.to_csv('raw_thermostats_data.csv', index=False)
  
