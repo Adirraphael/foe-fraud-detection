@@ -42,7 +42,7 @@ def check_thermostats(site_address: str):
         return {"status": "passed", "message": "Address is within thermostat limit", "order_count": order_count}
     
 
-# packs - account rule 
+# packs -- account rule 
 @router.get("/check-packs-account_rule")
 def check_account_rule(email: str, year: int):
     query = text("""
